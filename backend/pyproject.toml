@@ -17,6 +17,7 @@ dependencies = [
     "python-multipart (>=0.0.20,<0.0.21)",
     "openai (>=1.99.5,<2.0.0)",
     "gtts (>=2.5.4,<3.0.0)",
+    "pypdf (>=5,<6)",
 ]
 
 [tool.poetry]
