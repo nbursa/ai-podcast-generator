@@ -1,2 +1,4 @@
 /materials
 /docs
+.DS_Store
+.vscode
