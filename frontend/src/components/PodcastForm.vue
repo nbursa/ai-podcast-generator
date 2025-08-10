@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import type { PodcastCreatePayload } from "../api";
 import { createPodcast } from "../api";
+import { usePodcastsStore } from "../stores/podcasts";
 
 const title = ref("");
 const description = ref<string | null>("");
@@ -13,6 +14,8 @@ const error = ref("");
 const createdId = ref("");
 
 const emit = defineEmits<{ (e: "created", id: string): void }>();
+
+const store = usePodcastsStore();
 
 async function submit() {
   error.value = "";
@@ -28,6 +31,16 @@ async function submit() {
     const { id } = await createPodcast(payload);
     createdId.value = id;
     emit("created", id);
+    await store.refresh();
+    store.startPolling(3000);
+    // Reset form after 5 seconds of showing created ID
+    setTimeout(() => {
+      title.value = "";
+      description.value = "";
+      voice.value = "en";
+      materialsSet.value = "1";
+      createdId.value = "";
+    }, 5000);
   } catch (e: any) {
     error.value = e?.response?.data?.detail || e?.message || "Failed to create";
   } finally {
