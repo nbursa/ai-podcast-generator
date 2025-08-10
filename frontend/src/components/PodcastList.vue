@@ -3,13 +3,11 @@ import { onMounted, onUnmounted, ref, watch, defineExpose } from "vue";
 import { usePodcastsStore } from "../stores/podcasts";
 import type { PodcastStatus } from "../api";
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
 const store = usePodcastsStore();
 const status = ref<"" | PodcastStatus>("");
 
-function pct(x?: number) {
-  if (typeof x !== "number") return "";
-  return `${Math.round(x * 100)}%`;
-}
 function nice(ts: string) {
   try {
     return new Date(ts).toLocaleString();
@@ -75,9 +73,11 @@ defineExpose({ refresh });
         <div class="flex flex-col gap-1">
           <div class="flex items-baseline gap-2">
             <span class="font-semibold">{{ item.title }}</span>
-            <span class="text-sm text-zinc-600"
-              >· {{ item.status }} · {{ pct(item.progress) }}</span
-            >
+            <span v-if="item.status !== 'done'" class="text-sm text-zinc-600">
+              · {{ item.status }} ·
+              <span class="animate-pulse">processing</span>
+            </span>
+            <span v-else class="text-sm text-zinc-600">· done</span>
           </div>
           <p v-if="item.description" class="text-sm">{{ item.description }}</p>
           <div class="text-xs text-zinc-600 flex gap-3">
@@ -92,7 +92,11 @@ defineExpose({ refresh });
         <div class="mt-2 flex items-center gap-3">
           <audio
             v-if="item.audio_url"
-            :src="item.audio_url"
+            :src="
+              item.audio_url.startsWith('http')
+                ? item.audio_url
+                : apiBaseUrl + item.audio_url
+            "
             controls
             preload="none"
             class="w-full"
