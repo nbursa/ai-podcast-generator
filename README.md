@@ -79,6 +79,52 @@ Requirements: **Python 3.11+**, `poetry`, and optionally an OpenAI API key.
 
 ---
 
+## Quickstart (frontend)
+
+The frontend is located in the `frontend` directory and is built with **Vue 3**, **TypeScript**, **Pinia**, and **TailwindCSS**.
+
+1. Navigate to the `frontend` directory:
+
+    ```bash
+    cd frontend
+    ```
+
+2. Install dependencies (choose one):
+
+    ```bash
+    pnpm install
+    # or
+    npm install
+    ```
+
+3. Configure your environment:
+    - Create a `.env` file in the `frontend` directory.
+    - Set `VITE_API_BASE` to point to your backend API URL, for example:
+
+      ```txt
+      VITE_API_BASE=http://localhost:3000
+      ```
+
+4. Run the development server (choose one):
+
+    ```bash
+    pnpm dev
+    # or
+    npm run dev
+    ```
+
+5. Build for production (choose one):
+
+    ```bash
+    pnpm build
+    # or
+    npm run build
+    ```
+
+The frontend provides the UI for creating podcasts, viewing the list of episodes, playing audio, filtering, and deleting episodes.
+
+---
+
 ## API
 
 ### POST `/v1/podcasts`
