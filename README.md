@@ -45,7 +45,7 @@ Requirements: **Python 3.11+**, `poetry`, and optionally an OpenAI API key.
     # Optional: enables LLM script generation
     OPENAI_API_KEY=sk-...
     # Materials root folders used by the API when materials_set is 1 or 2
-    MATERIALS_DIRS=["/Users/nenad/Projects/ai-podcast-generator/materials/1","/Users/nenad/Projects/ai-podcast-generator/materials/2"]
+    MATERIALS_DIRS=["ai-podcast-generator/materials/1","ai-podcast-generator/materials/2"]
     ```
 
 3. Run
