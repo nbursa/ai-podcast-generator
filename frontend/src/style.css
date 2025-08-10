@@ -79,3 +79,18 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+@layer components {
+  .input {
+    @apply border border-zinc-300 rounded px-3 py-2 bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100;
+  }
+  .btn-primary {
+    @apply inline-flex items-center rounded bg-zinc-900 text-white px-4 py-2 hover:bg-zinc-800 disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center rounded border border-zinc-300 px-3 py-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800;
+  }
+  .btn-danger {
+    @apply inline-flex items-center rounded border border-red-300 bg-red-50 text-red-800 px-3 py-1.5 hover:bg-red-100;
+  }
+}
