@@ -2,8 +2,6 @@
 
 An end‑to‑end **podcast generation pipeline** that turns pre‑structured learning materials (PDF/JSON “content pillar”, notes, etc.) into a two‑host conversational **script** and an **MP3** via TTS. This is an **opinionated architecture / proof‑of‑concept**, not a turnkey product.
 
-> **Non‑commercial demo.** The code is published for portfolio/demo purposes. If you intend to use it in production, please reach out for a commercial license and implementation.
-
 ---
 
 ## What this is
@@ -154,9 +152,3 @@ Output files are saved under `STORAGE_DIR` and served at `/media/audio/<id>.mp3`
 - Better pillar normalization and chunk prioritization
 - Quality evaluation + guardrails for long numeric/token sequences
 - Minimal web UI (upload, progress, embedded player)
-
----
-
-## License
-
-This project is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License - see the [LICENSE](LICENSE) file for details.
