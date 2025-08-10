@@ -31,6 +31,8 @@ MATERIALS_DIRS=["/materials/1","/materials/2"]
 
 ## Implementation notes
 
+The materials directory should be placed in the project root (same level as backend and frontend folders).
+
 - **Script generation**: OpenAI (if key present) or deterministic local builder.
 - **Materials detection**: prefers content‑pillar JSON; else reads PDF/MD/TXT/JSON and composes source text.
 - **TTS**: gTTS wrapper with cleaning of labels/URLs to avoid spelling out noise.
