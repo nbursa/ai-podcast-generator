@@ -14,6 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.core.config import settings
 from app.services.tts_service import text_to_speech
+from pathlib import Path
 
 # --- Materials/script helpers ---
 from typing import Iterable, List, Optional, Dict, Any, Literal
@@ -191,6 +192,46 @@ class _State(BaseModel):
 
 
 _STORE: Dict[str, _State] = {}
+
+
+def _bootstrap_from_storage() -> int:
+    """Scan the storage directory for existing MP3s and load them into the in‑memory store.
+
+    Returns the number of episodes added.
+    """
+    added = 0
+    try:
+        storage = Path(settings.storage_dir)
+        if not storage.exists():
+            return 0
+        for mp3 in storage.glob("*.mp3"):
+            try:
+                episode_id = mp3.stem  # filename without extension
+                if episode_id in _STORE:
+                    continue
+                stat = mp3.stat()
+                ts = datetime.utcfromtimestamp(stat.st_mtime)
+                _STORE[episode_id] = _State(
+                    id=episode_id,
+                    title=f"Episode {episode_id}",
+                    description=None,
+                    voice=None,
+                    script=None,
+                    source_urls=[],
+                    status="done",
+                    progress=1.0,
+                    audio_url=f"/media/audio/{mp3.name}",
+                    error=None,
+                    created_at=ts,
+                    updated_at=ts,
+                )
+                added += 1
+            except Exception:
+                # ignore a single bad file and continue
+                continue
+    except Exception:
+        return added
+    return added
 
 
 # -------------------------------
@@ -380,9 +421,16 @@ async def cancel_or_delete_podcast(podcast_id: str) -> PodcastStatusResponse:
     if not state:
         raise HTTPException(status_code=404, detail="Podcast not found")
 
-    # If already done, "delete" from store (demo)
+    # If already done, "delete" from store
     if state.status in {"done", "failed"}:
         removed = _STORE.pop(podcast_id)
+        # delete associated audio file
+        try:
+            audio_path = os.path.join(settings.storage_dir, f"{podcast_id}.mp3")
+            if os.path.exists(audio_path):
+                os.remove(audio_path)
+        except Exception:
+            pass
         return _as_status(removed)
 
     # Otherwise, mark as cancelled
@@ -398,6 +446,13 @@ async def debug_raw_state(podcast_id: str) -> Dict[str, Any]:
     if not state:
         raise HTTPException(status_code=404, detail="Podcast not found")
     return state.model_dump()
+
+
+# Manual rescan endpoint
+@router.post("/_rescan")
+async def rescan_storage() -> Dict[str, Any]:
+    count = _bootstrap_from_storage()
+    return {"added": count, "total": len(_STORE)}
 
 
 # -------------------------------
@@ -420,6 +475,7 @@ os.makedirs(settings.storage_dir, exist_ok=True)
 @app.on_event("startup")
 def _startup() -> None:
     os.makedirs(settings.storage_dir, exist_ok=True)
+    _bootstrap_from_storage()
 
 
 # Serve static files for audio
