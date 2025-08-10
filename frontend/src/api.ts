@@ -36,7 +36,7 @@ export interface PodcastListResponse {
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE || "http://localhost:3000",
-  timeout: 30000,
+  timeout: 0,
 });
 
 export async function createPodcast(
